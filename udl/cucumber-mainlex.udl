@@ -1,50 +1,50 @@
 # UDL for Cucumber
-
-language Cucumber;
-family tpl;
-
-start_style TPL_DEFAULT
-end_style TPL_VARIABLE
-
-keywords [Feature Background Scenario Outline Given When Then And But
-          Examples "*"
-];
-
-keyword_style TPL_IDENTIFIER => TPL_WORD;
-
-pattern CS = '-\w\d._\x80-\xff'   # inside cset
-pattern WS = '\s\t\r\n'           # inside cset
-
 ################################################################################
 # TODO: Feature *must* be followed by Scenario, Background or Scenario Outline
 # TODO: Comments:  Start with '#" must be first and only thing on line.
 ################################################################################
-initial IN_DEFAULT;
-#initial IN_M_DEFAULT;
+language Cucumber
 
-# Null-transition to get into SSL state
-#state IN_M_DEFAULT:
-#/./ : redo, => IN_DEFAULT
+initial IN_SSL_DEFAULT
 
-#
-state IN_DEFAULT:
-'#' :  paint(upto, TPL_DEFAULT), => IN_COMMENT; 
-/[$WS]+/ : #stay
+keywords [Feature Background Scenario Outline Given When Then And But
+          Examples *
+];
+#keyword_style SSL_DEFAULT => SSL_WORD
+keyword_style SSL_IDENTIFIER => SSL_WORD
 
-#/^\s*#/ :  paint(upto, TPL_DEFAULT), => IN_COMMENT;
-#'"' :  paint(upto, TPL_DEFAULT), => IN_TPL_DSTRING;
-#'\'' : paint(upto, TPL_DEFAULT), => IN_TPL_SSTRING;
-#'@' :  paint(upto, TPL_DEFAULT), => IN_TPL_TAG;
-#
-#state IN_TPL_TAG:
-#'@': paint(include, TPL_IDENTIFIER), => IN_TPL_DEFAULT;
-#
+pattern WS = '\s\t\r\n'
 
-state IN_COMMENT:
-/[\r\n]/ : paint(upto, TPL_COMMENT), => IN_DEFAULT;
+state IN_SSL_DEFAULT:
+'#' : paint(upto, SSL_DEFAULT), => IN_SSL_COMMENT
+'@' : paint(upto, SSL_DEFAULT), => IN_SSL_TAG
+'\'' : paint(upto, SSL_DEFAULT), => IN_SSL_SQSTRING
+'"' : paint(upto, SSL_DEFAULT), => IN_SSL_DQSTRING
+/^\s*"""\s*$/ : paint(upto, SSL_DEFAULT), => IN_SSL_DOCSTRING
+/[0-9]/ : paint(upto, SSL_DEFAULT), => IN_SSL_NUMBER
 
-#state IN_TPL_DSTRING:
-#'"' : paint(include, SSL_STRING), => IN_SSL_DEFAULT;
-#
-#state IN_TPL_SSTRING:
-#'\'' : paint(include, SSL_STRING), => IN_SSL_DEFAULT;
+## Comments
+state IN_SSL_COMMENT:
+/$/ : paint(upto, SSL_COMMENT), => IN_SSL_DEFAULT
+
+## Tags
+state IN_SSL_TAG:
+/\s+/ : paint(upto, SSL_VARIABLE), => IN_SSL_DEFAULT
+
+## Strings
+state IN_SSL_SQSTRING:
+'\'' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+
+state IN_SSL_DQSTRING:
+'"' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+
+state IN_SSL_DOCSTRING:
+/^\s*"""\s*$/ : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+
+## Numbers
+state IN_SSL_NUMBER:
+/$/  : paint(upto, SSL_NUMBER), => IN_SSL_DEFAULT
+'.'  : #stay
+/\d/ : #stay
+/./  : paint(upto, SSL_NUMBER), => IN_SSL_DEFAULT
+
