@@ -1,7 +1,6 @@
 # UDL for Cucumber
 ################################################################################
 # TODO: Feature *must* be followed by Scenario, Background or Scenario Outline
-# TODO: Comments:  Start with '#" must be first and only thing on line.
 ################################################################################
 language Cucumber
 
@@ -11,7 +10,7 @@ keywords [Feature Background Scenario Outline Given When Then And But
           Examples *
 ];
 #keyword_style SSL_DEFAULT => SSL_WORD
-keyword_style SSL_IDENTIFIER => SSL_WORD
+keyword_style SSL_DEFAULT => SSL_WORD
 
 pattern WS = '\s\t\r\n'
 
@@ -22,6 +21,11 @@ state IN_SSL_DEFAULT:
 '"' : paint(upto, SSL_DEFAULT), => IN_SSL_DQSTRING
 /^\s*"""\s*$/ : paint(upto, SSL_DEFAULT), => IN_SSL_DOCSTRING
 /[0-9]/ : paint(upto, SSL_DEFAULT), => IN_SSL_NUMBER
+####### Not sure how I want to handle Data Tables #############################
+#/^\s*\|/ : paint(upto, SSL_DEFAULT), => IN_SSL_TABLE
+#'|' : paint(upto, SSL_DEFAULT), paint(include, SSL_STRING), => IN_SSL_DEFAULT
+################################################################################
+'<' : paint(upto, SSL_DEFAULT), => IN_SSL_PLACEHOLDER
 
 ## Comments
 state IN_SSL_COMMENT:
@@ -29,17 +33,20 @@ state IN_SSL_COMMENT:
 
 ## Tags
 state IN_SSL_TAG:
-/\s+/ : paint(upto, SSL_VARIABLE), => IN_SSL_DEFAULT
+/\s+/ : paint(upto, SSL_IDENTIFIER), => IN_SSL_DEFAULT
 
 ## Strings
 state IN_SSL_SQSTRING:
 '\'' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+'<' : paint(upto, SSL_STRING), spush_check(IN_SSL_SQSTRING), => IN_SSL_PLACEHOLDER
 
 state IN_SSL_DQSTRING:
 '"' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+'<' : paint(upto, SSL_STRING), spush_check(IN_SSL_DQSTRING), => IN_SSL_PLACEHOLDER
 
 state IN_SSL_DOCSTRING:
 /^\s*"""\s*$/ : paint(include, SSL_STRING), => IN_SSL_DEFAULT
+'<' : paint(upto, SSL_STRING), spush_check(IN_SSL_DOCSTRING), => IN_SSL_PLACEHOLDER
 
 ## Numbers
 state IN_SSL_NUMBER:
@@ -47,4 +54,12 @@ state IN_SSL_NUMBER:
 '.'  : #stay
 /\d/ : #stay
 /./  : paint(upto, SSL_NUMBER), => IN_SSL_DEFAULT
+
+## Placeholders
+state IN_SSL_PLACEHOLDER:
+'>' : paint(include, SSL_VARIABLE), spop_check, => IN_SSL_DEFAULT
+
+## Data Tables
+#state IN_SSL_TABLE:
+#/\s*\|\s*$/ : paint(include, ?????), => IN_SSL_DEFAULT
 
