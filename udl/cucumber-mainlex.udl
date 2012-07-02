@@ -1,0 +1,50 @@
+# UDL for Cucumber
+
+language Cucumber;
+family tpl;
+
+start_style TPL_DEFAULT
+end_style TPL_VARIABLE
+
+keywords [Feature Background Scenario Outline Given When Then And But
+          Examples "*"
+];
+
+keyword_style TPL_IDENTIFIER => TPL_WORD;
+
+pattern CS = '-\w\d._\x80-\xff'   # inside cset
+pattern WS = '\s\t\r\n'           # inside cset
+
+################################################################################
+# TODO: Feature *must* be followed by Scenario, Background or Scenario Outline
+# TODO: Comments:  Start with '#" must be first and only thing on line.
+################################################################################
+initial IN_DEFAULT;
+#initial IN_M_DEFAULT;
+
+# Null-transition to get into SSL state
+#state IN_M_DEFAULT:
+#/./ : redo, => IN_DEFAULT
+
+#
+state IN_DEFAULT:
+'#' :  paint(upto, TPL_DEFAULT), => IN_COMMENT; 
+/[$WS]+/ : #stay
+
+#/^\s*#/ :  paint(upto, TPL_DEFAULT), => IN_COMMENT;
+#'"' :  paint(upto, TPL_DEFAULT), => IN_TPL_DSTRING;
+#'\'' : paint(upto, TPL_DEFAULT), => IN_TPL_SSTRING;
+#'@' :  paint(upto, TPL_DEFAULT), => IN_TPL_TAG;
+#
+#state IN_TPL_TAG:
+#'@': paint(include, TPL_IDENTIFIER), => IN_TPL_DEFAULT;
+#
+
+state IN_COMMENT:
+/[\r\n]/ : paint(upto, TPL_COMMENT), => IN_DEFAULT;
+
+#state IN_TPL_DSTRING:
+#'"' : paint(include, SSL_STRING), => IN_SSL_DEFAULT;
+#
+#state IN_TPL_SSTRING:
+#'\'' : paint(include, SSL_STRING), => IN_SSL_DEFAULT;
