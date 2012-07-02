@@ -9,13 +9,13 @@ Syntax Highlighting
 Listed below are the various types of Cucumber Syntax and the Komodo Element Type
 that defines it's color:
 
-* Comments     --> comments   --> # this is a comment
-* Tags         --> identifier --> @tag1 @tag2 @example_tags
-* Strings      --> strings    --> 'Single', "Double" or """Doc Strings"""
-* Numbers      --> numbers    --> 1.0, 123
-* Placeholders --> variables  --> <input>, <output>
-* Data Tables  --> variables  --> | value1 | value2 |
-* Keywords     --> keywords   --> Feature, Background, Given, When, Then, etc...
+* Comments     --> comments   --> `# this is a comment`
+* Tags         --> identifier --> `@tag1 @tag2 @example_tags`
+* Strings      --> strings    --> `'Single', "Double" or """Doc Strings"""`
+* Numbers      --> numbers    --> `1.0, 123`
+* Placeholders --> variables  --> `<input>, <output>`
+* Data Tables  --> variables  --> `| value1 | value2 |`
+* Keywords     --> keywords   --> `Feature, Background, Given, When, Then, etc...`
 
 Building from Source
 --------------------
