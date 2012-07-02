@@ -22,24 +22,24 @@ class KoCucumberLanguage(KoUDLLanguage):
     _reg_clsid_ = "97929147-d5df-4267-bb6d-37e35f61e604"
     defaultExtension = '.feature'
 
-    lang_from_udl_family = {
-        'TPL': 'Cucumber'
-    }
+    lang_from_udl_family = {'SSL': 'Cucumber'}
 
     sample = """
 # This is a comment
 
 Feature: Sample Feature
 
+    Some text describing this awesome feature.
+
 Background:
     Given some shared setup
     
 @scenario1
 Scenario: Sample Scenario
-    Given some initial setup
-    And some more setup
+    Given some initial "<input>"
+    And some more setup that include this "hello world"
     But not that kind of setup
-    When I poke and peek and prod
+    When I poke and peek and prod 10 times
     Then I should see something amazing happen
 
     Examples:
@@ -47,10 +47,11 @@ Scenario: Sample Scenario
         | garbage | garbage |
         | foo     | bar     |
 
-@scenario2
+@scenario2 @keyword_less
 Scenario: All Star Scenario
-    * some initial setup
+    * some initial "<input>"
+    * some more setup that include this "hello world"
     * not that kind of setup
-    * I poke and peek and prod
+    * I poke and peek and prod 2.5 times
     * I should see something amazing happen
 """

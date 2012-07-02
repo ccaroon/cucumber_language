@@ -4,10 +4,10 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>cucumber_language@caroon.org</em:id>
     <em:name>Cucumber Language</em:name>
-    <em:version>1.0</em:version>
-    <em:description></em:description>
+    <em:version>1.0.0</em:version>
+    <em:description>Cucumber language support for Komodo (UDL-based)</em:description>
     <em:creator>Craig N. Caroon</em:creator>
-    <em:homepageURL></em:homepageURL>
+    <em:homepageURL>https://github.com/ccaroon/cucumber_language</em:homepageURL>
     <em:type>2</em:type> <!-- type=extension --> 
     <em:unpack>true</em:unpack>
 

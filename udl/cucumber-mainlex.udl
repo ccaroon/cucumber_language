@@ -1,31 +1,28 @@
-# UDL for Cucumber
 ################################################################################
-# TODO: Feature *must* be followed by Scenario, Background or Scenario Outline
+# UDL for Cucumber
 ################################################################################
 language Cucumber
 
 initial IN_SSL_DEFAULT
 
-keywords [Feature Background Scenario Outline Given When Then And But
-          Examples *
-];
-#keyword_style SSL_DEFAULT => SSL_WORD
+keywords [Feature Background Scenario Outline Given When Then And But Examples '*']
 keyword_style SSL_DEFAULT => SSL_WORD
 
-pattern WS = '\s\t\r\n'
+pattern SECTIONKW  = '(Feature|Background|Scenario|Scenario Outline|Examples)'
+pattern SCENARIOKW = '(Given|When|Then|And|But|\*)'
 
 state IN_SSL_DEFAULT:
-'#' : paint(upto, SSL_DEFAULT), => IN_SSL_COMMENT
-'@' : paint(upto, SSL_DEFAULT), => IN_SSL_TAG
-'\'' : paint(upto, SSL_DEFAULT), => IN_SSL_SQSTRING
-'"' : paint(upto, SSL_DEFAULT), => IN_SSL_DQSTRING
+'#'           : paint(upto, SSL_DEFAULT), => IN_SSL_COMMENT
+'@'           : paint(upto, SSL_DEFAULT), => IN_SSL_TAG
+'\''          : paint(upto, SSL_DEFAULT), => IN_SSL_SQSTRING
+'"'           : paint(upto, SSL_DEFAULT), => IN_SSL_DQSTRING
 /^\s*"""\s*$/ : paint(upto, SSL_DEFAULT), => IN_SSL_DOCSTRING
-/[0-9]/ : paint(upto, SSL_DEFAULT), => IN_SSL_NUMBER
-####### Not sure how I want to handle Data Tables #############################
-#/^\s*\|/ : paint(upto, SSL_DEFAULT), => IN_SSL_TABLE
-#'|' : paint(upto, SSL_DEFAULT), paint(include, SSL_STRING), => IN_SSL_DEFAULT
-################################################################################
-'<' : paint(upto, SSL_DEFAULT), => IN_SSL_PLACEHOLDER
+/[0-9]/       : paint(upto, SSL_DEFAULT), => IN_SSL_NUMBER
+/^\s*\|/      : paint(upto, SSL_DEFAULT), => IN_SSL_TABLE
+'<'           : paint(upto, SSL_DEFAULT), => IN_SSL_PLACEHOLDER
+## Keywords won't hilite w/out these. Not sure why.
+/^\s*$SECTIONKW:/    : paint(upto, SSL_DEFAULT), paint(include, SSL_WORD), => IN_SSL_DEFAULT
+/^\s*$SCENARIOKW\s+/ : paint(upto, SSL_DEFAULT), paint(include, SSL_WORD), => IN_SSL_DEFAULT
 
 ## Comments
 state IN_SSL_COMMENT:
@@ -38,7 +35,7 @@ state IN_SSL_TAG:
 ## Strings
 state IN_SSL_SQSTRING:
 '\'' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
-'<' : paint(upto, SSL_STRING), spush_check(IN_SSL_SQSTRING), => IN_SSL_PLACEHOLDER
+'<'  : paint(upto, SSL_STRING), spush_check(IN_SSL_SQSTRING), => IN_SSL_PLACEHOLDER
 
 state IN_SSL_DQSTRING:
 '"' : paint(include, SSL_STRING), => IN_SSL_DEFAULT
@@ -46,7 +43,8 @@ state IN_SSL_DQSTRING:
 
 state IN_SSL_DOCSTRING:
 /^\s*"""\s*$/ : paint(include, SSL_STRING), => IN_SSL_DEFAULT
-'<' : paint(upto, SSL_STRING), spush_check(IN_SSL_DOCSTRING), => IN_SSL_PLACEHOLDER
+'<'           : paint(upto, SSL_STRING), spush_check(IN_SSL_DOCSTRING), \
+                                         => IN_SSL_PLACEHOLDER
 
 ## Numbers
 state IN_SSL_NUMBER:
@@ -60,6 +58,5 @@ state IN_SSL_PLACEHOLDER:
 '>' : paint(include, SSL_VARIABLE), spop_check, => IN_SSL_DEFAULT
 
 ## Data Tables
-#state IN_SSL_TABLE:
-#/\s*\|\s*$/ : paint(include, ?????), => IN_SSL_DEFAULT
-
+state IN_SSL_TABLE:
+/\s*\|\s*$/ : paint(include, SSL_VARIABLE), => IN_SSL_DEFAULT
