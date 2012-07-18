@@ -17,6 +17,20 @@ that defines it's color:
 * Data Tables  --> variables  --> `| value1 | value2 |`
 * Keywords     --> keywords   --> `Feature, Background, Given, When, Then, etc...`
 
+Code Intelligence
+-----------------
+
+### Auto Complete ###
+* Tags         --> Triggered when you type an At Sign (@)
+* Placeholders --> Triggered when you type a left Angle Bracket (<)
+* Keywords     --> Triggered when you start typing something that looks like a
+                   Cucumber keyword.
+
+Manual completion also supported for the above.
+
+### Call Tips ###
+None supported.
+
 Building from Source
 --------------------
 Assuming you have Komodo installed, you can use the `koext` tool to build the
