@@ -5,10 +5,10 @@ language Cucumber
 
 initial IN_SSL_DEFAULT
 
-keywords [Feature Background Scenario Outline Given When Then And But Examples '*']
+keywords [Feature Background 'Scenario Outline' Scenario Given When Then And But Examples '*']
 keyword_style SSL_DEFAULT => SSL_WORD
 
-pattern SECTIONKW  = '(Feature|Background|Scenario|Scenario Outline|Examples)'
+pattern SECTIONKW  = '(Feature:|Background:|Scenario:|Scenario Outline:|Examples:)'
 pattern SCENARIOKW = '(Given|When|Then|And|But|\*)'
 
 state IN_SSL_DEFAULT:
@@ -21,7 +21,7 @@ state IN_SSL_DEFAULT:
 /^\s*\|/      : paint(upto, SSL_DEFAULT), => IN_SSL_TABLE
 '<'           : paint(upto, SSL_DEFAULT), => IN_SSL_PLACEHOLDER
 ## Keywords won't hilite w/out these. Not sure why.
-/^\s*$SECTIONKW:/    : paint(upto, SSL_DEFAULT), paint(include, SSL_WORD), => IN_SSL_DEFAULT
+/^\s*$SECTIONKW\s+/    : paint(upto, SSL_DEFAULT), paint(include, SSL_WORD), => IN_SSL_DEFAULT
 /^\s*$SCENARIOKW\s+/ : paint(upto, SSL_DEFAULT), paint(include, SSL_WORD), => IN_SSL_DEFAULT
 
 ## Comments
