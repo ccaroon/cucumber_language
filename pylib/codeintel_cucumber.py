@@ -110,12 +110,12 @@ class CucumberLangIntel(LangIntel):
         ctlr.start(buf, trg)
 
         if trg.id == (self.lang, TRG_FORM_CPLN, "placeholders"):
-            ctlr.set_cplns(self._get_all_placeholders_in_buffer(buf))
+            ctlr.set_cplns(self._get_all_placeholders_in_buffer(buf, pos))
             ctlr.done("success")
             return
         
         if trg.id == (self.lang, TRG_FORM_CPLN, "tags"):
-            ctlr.set_cplns(self._get_all_tags_in_buffer(buf))
+            ctlr.set_cplns(self._get_all_tags_in_buffer(buf, pos))
             ctlr.done("success")
             return
 
@@ -130,16 +130,18 @@ class CucumberLangIntel(LangIntel):
         ctlr.error("Unknown trigger type: %r" % (trg, ))
         ctlr.done("error")
     ############################################################################
-    def _get_all_placeholders_in_buffer(self, buf):
+    def _get_all_placeholders_in_buffer(self, buf, pos):
         all_placeholders = set()
         for token in buf.accessor.gen_tokens():
+            if token.get('start_index') == pos: continue
             if token.get('text')[0] == '<':
                 all_placeholders.add(token.get('text'))
         return [("variable", x) for x in sorted(all_placeholders, cmp=CompareNPunctLast)]
     ############################################################################
-    def _get_all_tags_in_buffer(self, buf):
+    def _get_all_tags_in_buffer(self, buf, pos):
         all_tags = set()
         for token in buf.accessor.gen_tokens():
+            if token.get('start_index') == pos-1: continue
             if token.get('text')[0] == '@':
                 all_tags.add(token.get('text')[1:])
         return [("identifier", x) for x in sorted(all_tags, cmp=CompareNPunctLast)]
