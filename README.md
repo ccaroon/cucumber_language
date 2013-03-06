@@ -1,8 +1,7 @@
 cucumber_language
 =================
 
-Cucumber Language support for Komodo (UDL-based). I have only tested this on
-Komodo 7.
+Cucumber Language support for Komodo (UDL-based). Should work with Komodo 7-8.
 
 Syntax Highlighting
 -------------------
